@@ -1,0 +1,11 @@
+{
+    "user": {
+        "name": "Sarishma",
+        "college": "BCA"
+    },
+    "preferences": {
+        "assistant_name": "DARVIS",
+        "voice": "female"
+    },
+    "memory": {}
+}
