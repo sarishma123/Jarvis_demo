@@ -1,8 +1,10 @@
 import customtkinter as ctk
 from datetime import datetime
+import threading
 
 from voice import speak, listen
 from commands import execute
+
 
 # Theme
 ctk.set_appearance_mode("dark")
@@ -77,7 +79,7 @@ mic_button = ctk.CTkButton(
     fg_color="#7B2CBF",
     hover_color="#9D4EDD",
     font=("Segoe UI", 16, "bold"),
-    command=lambda: start_listening()
+    command=lambda: threading.Thread(target=start_listening, daemon=True).start()
 )
 
 mic_button.pack(pady=25)
@@ -85,25 +87,27 @@ chatbox.see("end")      # Auto-scroll to latest message
 
 add_message("You", "Hi DARVIS!")
 add_message("DARVIS", "Hello! Nice to see you again.")
+
 def start_listening():
 
-    add_message("💜 DARVIS", "Listening...")
+    app.after(0, lambda: add_message("💜 DARVIS", "🎤 Listening..."))
 
     command = listen()
 
     if command == "":
+        app.after(0, lambda: add_message("💜 DARVIS", "I didn't hear anything."))
         return
 
-    add_message("🧑 You", command)
+    app.after(0, lambda: add_message("🧑 You", command))
 
     response = execute(command)
 
     if response == "EXIT":
         speak("Goodbye Sarishma.")
-        app.destroy()
+        app.after(0, app.destroy)
         return
 
-    add_message("💜 DARVIS", response)
+    app.after(0, lambda: add_message("💜 DARVIS", response))
     speak(response)
 
 # Keep window open
