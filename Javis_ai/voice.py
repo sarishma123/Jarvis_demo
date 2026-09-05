@@ -1,35 +1,45 @@
-import asyncio
-import os
-import tempfile
+import pyttsx3
 import speech_recognition as sr
+from config import ASSISTANT_NAME, VOICE_RATE, VOICE_INDEX
+
+engine = pyttsx3.init()
+
+voices = engine.getProperty("voices")
+
+if len(voices) > VOICE_INDEX:
+    engine.setProperty("voice", voices[VOICE_INDEX].id)
+
+engine.setProperty("rate", VOICE_RATE)
+
+import asyncio
 import edge_tts
-import pygame
+from playsound import playsound
+import tempfile
+import os
 
-VOICE = "en-US-AriaNeural"   # Female AI voice
+VOICE = "en-US-AriaNeural"   # Female Microsoft AI voice
 
-pygame.mixer.init()
-
-
-async def _speak_async(text):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-        filename = f.name
-
-    communicate = edge_tts.Communicate(text, VOICE)
-    await communicate.save(filename)
-
-    pygame.mixer.music.load(filename)
-    pygame.mixer.music.play()
-
-    while pygame.mixer.music.get_busy():
-        await asyncio.sleep(0.1)
-
-    pygame.mixer.music.unload()
-    os.remove(filename)
-
+RATE = "+15%"   # Speed of speech
 
 def speak(text):
     print("DARVIS:", text)
-    asyncio.run(_speak_async(text))
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+        filename = temp_file.name
+
+    async def generate_voice():
+        communicate = edge_tts.Communicate(
+            text=text,
+            voice=VOICE,
+            rate=RATE
+        )
+        await communicate.save(filename)
+
+    asyncio.run(generate_voice())
+
+    playsound(filename)
+    os.remove(filename)
+
 
 
 def listen():
@@ -37,8 +47,16 @@ def listen():
 
     with sr.Microphone() as source:
         print("🎤 Listening...")
-        recognizer.adjust_for_ambient_noise(source, duration=1)
-        audio = recognizer.listen(source)
+        recognizer.adjust_for_ambient_noise(source, duration=0.5)
+
+        try:
+            audio = recognizer.listen(
+                source,
+                timeout=5,
+                phrase_time_limit=5
+            )
+        except sr.WaitTimeoutError:
+            return ""
 
     try:
         command = recognizer.recognize_google(audio)
@@ -46,7 +64,6 @@ def listen():
         return command.lower()
 
     except sr.UnknownValueError:
-        speak("Sorry, I didn't understand.")
         return ""
 
     except sr.RequestError:

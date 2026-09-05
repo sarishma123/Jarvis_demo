@@ -1,12 +1,12 @@
-from Javis_ai.voice import speak, listen
-from Javis_ai.commands import execute
-from Javis_ai.config import ASSISTANT_NAME, USER_NAME
+from voice import speak, listen
+from commands import execute
+from config import USER_NAME, ASSISTANT_NAME
 
 
 def start():
 
     speak(f"Hello {USER_NAME}. I am {ASSISTANT_NAME}.")
-    speak("I am ready. What can I do for you?")
+    speak("How can I help you today?")
 
     while True:
 
@@ -18,7 +18,7 @@ def start():
         response = execute(command)
 
         if response == "EXIT":
-            speak("Goodbye. Have a nice day.")
+            speak("Goodbye. Have a wonderful day.")
             break
 
         speak(response)
