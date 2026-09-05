@@ -1,6 +1,6 @@
-from Jarvis_ai.voice import speak, listen
-from Jarvis_ai.commands import execute
-from Jarvis_ai.config import ASSISTANT_NAME, USER_NAME
+from Javis_ai.voice import speak, listen
+from Javis_ai.commands import execute
+from Javis_ai.config import ASSISTANT_NAME, USER_NAME
 
 
 def start():
