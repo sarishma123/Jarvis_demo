@@ -17,7 +17,7 @@ from playsound import playsound
 import tempfile
 import os
 
-VOICE = "en-US-AriaNeural"   # Female Microsoft AI voice
+VOICE = "en-US-AriaNeural"   # Female Microsoft AI voice to the jarvis
 
 RATE = "+15%"   # Speed of speech
 
