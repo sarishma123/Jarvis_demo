@@ -2,3 +2,4 @@ SpeechRecognition
 edge-tts
 pygame-ce
 PyAudio
+#py-audio
